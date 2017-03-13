@@ -15,4 +15,4 @@ The snippets file is in the `snippets` directory. Right now you can just add sni
     """
 ```
 
-More on snippets syntax (here)[http://flight-manual.atom.io/using-atom/sections/snippets/]. 
+More on snippets syntax [here](http://flight-manual.atom.io/using-atom/sections/snippets/).
