@@ -1,0 +1,157 @@
+'.source.supercollider':
+  'synthdef':
+    'prefix': 'synthdef'
+    'body': """
+      (
+        SynthDef(\\\\${1:synth1}, {
+          arg outBus = 0$2;
+          var out$3;
+          out = $4;
+          Out.ar(outBus, out);
+        }).add
+      )
+    """
+
+  'routine':
+    'prefix': 'routine'
+    'body': """
+      (
+        ~${1:routine1} = Routine({
+            $2
+        })
+      )
+    """
+
+  'score':
+    'prefix': 'score'
+    'body': """
+      (
+      ~score = Routine({
+        "start piece".postln;
+        $1
+        nil.yield
+
+        $2
+        })
+      )
+    """
+
+  'score component':
+    'prefix': 'scorecomp'
+    'body': """
+      "$1".postln;
+      $2
+      nil.yield
+
+      $3
+    """
+
+  'gui window with slider':
+    'prefix': 'guislider'
+    'body': """
+    (
+      w = Window(bounds: Rect(1000, 450, 200, 550))
+      .front
+      .alwaysOnTop_(true);
+      StaticText(w, Rect(20, 20, 150, 30)).string_("${1:Slider1}");
+      Slider(w, Rect(20, 60, 30, 380)).background_(Color.rand)
+      .value_(0.01)
+      .action_({
+      	arg newVal;
+      	var scaledVal = newVal.value.linlin(0,1,0,1).postln;
+      	~${2:synth1}.set(scaledVal);
+      });
+      StaticText(w, Rect(80, 20, 150, 30)).string_("${3:Slider2}");
+      Slider(w, Rect(80, 60, 30, 380)).background_(Color.rand)
+      .value_(0.01)
+      .action_({
+      	arg newVal;
+      	var scaledVal = newVal.value.linlin(0,1,0,1).postln;
+      	~${4:synth2}.set(scaledVal);
+      });
+      )
+    """
+
+  'test midi note data':
+    'prefix': 'midiin'
+    'body': """
+    MIDIClient.init;
+    MIDIIn.connectAll;
+
+    (
+    MIDIdef.noteOn(\\\\${1:test_note_on}, {
+    	arg vel, nn, chan, src;
+    	[nn, vel].postln;
+    });
+
+    MIDIdef.noteOff(\\\\${2:test_note_off}, {
+    	arg vel, nn, chan, src;
+    	[nn, vel].postln;
+    });
+
+    MIDIdef.cc(\\\\${3:test_cc}, {
+    	arg vel, nn, chan, src;
+    	[nn, vel].postln;
+    });
+    )
+    """
+
+
+  'simple midi keyboard':
+    'prefix': 'midiboard'
+    'body': """
+    (
+
+    ~notes  = Array.newClear(128);
+    ~toneAmpBus = Bus.control(s, 1);
+
+    (
+    SynthDef.new(\\\\tone, {
+      arg freq = 440, gate=0, amp = 1;
+        var sig, env, ampControl;
+        ampControl = amp * In.kr(~toneAmpBus);
+        sig = SinOsc.ar(freq)!2;
+        env = EnvGen.kr(Env.adsr, gate, doneAction:2);
+        sig = sig * env * ampControl;
+      Out.ar(0, sig);
+    }).add;
+    );
+
+
+    (
+    MIDIdef.noteOn(\\\\midiToneOn, {
+      arg vel, nn, chan, src;
+      [nn, vel].postln;
+      ~notes[nn] = Synth.new(
+        \\\\tone,
+        [
+          \\\\freq, nn.midicps,
+          \\\\amp, vel.linexp(1, 127, 0.01, 1.0),
+          \\\\gate, 1,
+        ]
+      );
+    });
+    );
+
+    (
+    MIDIdef.noteOff(\\\\midiToneOff, {
+      arg vel, nn;
+      [nn, vel].postln;
+      ~notes[nn].set(\\\\gate, 0);
+      ~notes[nn] = nil;
+    });
+    );
+
+    (
+    MIDIdef.cc(\\\\toneVolume, {
+      arg val, nn, chan, src;
+      [val, nn].postln;
+      ~toneAmpBus.set(val.linlin(0, 127, 0.0, 0.6));
+    }, 1)
+    );
+    )
+    """
+
+  'sine oscillator':
+    'prefix': 'sinosc'
+    'body': 'SinOsc.${1:ar}(freq: ${2:440}, phase: ${3:0}, mul: ${4:1}, add: ${5:0} )'

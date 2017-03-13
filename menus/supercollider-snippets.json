@@ -1,0 +1,26 @@
+{
+  "context-menu": {
+    "atom-text-editor": [
+      {
+        "label": "Toggle supercollider-snippets",
+        "command": "supercollider-snippets:toggle"
+      }
+    ]
+  },
+  "menu": [
+    {
+      "label": "Packages",
+      "submenu": [
+        {
+          "label": "supercollider-snippets",
+          "submenu": [
+            {
+              "label": "Toggle",
+              "command": "supercollider-snippets:toggle"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
