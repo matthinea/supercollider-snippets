@@ -1,6 +1,6 @@
 # supercollider-snippets package
 
-This is a snippets package for use in SuperCollider, a programming language for audio synthesis. Feel free to submit pull requests to add snippets you find useful; just make sure to check if similar coverage doesn't already exist. 
+This is an Atom snippets package for use in SuperCollider, a programming language for audio synthesis. Feel free to submit pull requests to add snippets you find useful; just make sure to check if similar coverage doesn't already exist. 
 
 # contributing
 
